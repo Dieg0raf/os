@@ -1,0 +1,13 @@
+1. CPU utilization should be 100%
+
+2. Total time will be 9 (actual answer is 10)
+
+3. Total time will be 6. Yes switching the order does matter because the first process will wait after running the first instruction, which will allow the second process run and finish before the first process can run again.
+
+4. The first process finishes, which does I/O, and then the second process runs. The first process will finish before the second process has run.
+
+5. The first process starts, but since it's doing I/O, the second process will being running and ends, then the first process is retured and finishes.
+
+6. When I ran this combination, it was slower than the other combination.  No, the system resources are not being effectively utilized because the CPU is being used and the I/O is READY to be used, but since the other process are still running, the I/O is not being used. Which means time will be wasted waiting for the I/O to finish instead of utilizing the CPU and I/O in parallel.
+
+7. When I ran this combination, it was faster than the other combination.  Yes the system resources are being effectively utilized because the I/Os and CPU are being used in parallel allowing for a shorter total time and more efficient use of both CPU and I/O.

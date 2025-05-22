@@ -1,0 +1,64 @@
+==> Process
+  - It'a a running program
+  - The program just sits on the disk, a bunch of instructions (and maybe some sstatic data), waiting to spring into action
+
+==> Mechanisms
+  - lower-level methods or protocols that implement a needed piece of functionality
+
+==> Time Sharing (mechanism)
+  - a basic techinque used by an OS to share a resource (CPU, or a network link)
+  - The OS creates the illlusion that each process has its own CPU
+  - By running one process, then stopping it and running another, and so on
+  - The CPU is shared among multiple processes
+  - the potential cost is performance, as each process will run more slowly if the CPU(s) must be shared
+
+==> Space Sharing (mechanism)
+  - resource is divided (in space) amount those who wish to use it
+  - e.g.: disk space is natrually a space shared resource 
+
+==> Context switch (mechanism)
+  - Gives the OS the ability to stop running one program and start running another on a given CPU
+
+==> Policies
+  - algorithms for making some kind of decision within the OS
+  - e.g.: which process to run next (**scheduling policy**)
+
+==> Flow of running a program(process)
+  1. The program (instructions and static data) is loaded into memory (RAM) from disk as **bytes**
+  2. OS sets up a process address space, which includes:
+    - code (program instructions)
+    - a stack (for local variables)
+    - a heap (for dynamic memory allocation)
+    - a data segment (for static/global variables)
+  3. Initializes a process control block (PCB) — this holds metadata about the process, including a placeholder for its register values.
+  4. Sets up the CPU register values just before the process starts running:
+    - Program Counter (PC): set to the first instruction of the program.
+    - Stack Pointer (SP): points to the top of the newly created stack.
+    - Other registers: often zeroed out or initialized based on system conventions
+  5. The CPU executes one process at a time, using it's registers
+  6. When switching process, the OS saves the state of the current process (registers, program counter, etc.) and loads the state of the next process to run, this gives the illusion that each process "has the CPU to itself"
+
+==> Process List
+  - The OS maintains a list of all processes, each with its own PCB
+  - The PCB contains:
+    - Process ID (PID)
+    - Process state (running, waiting, etc.)
+    - CPU registers (saved state)
+    - Memory management information (page tables, segment tables)
+    - I/O status information (open files, devices)
+    - Scheduling information (priority, time slice)
+
+==> Random Notes
+  - When writing a program, the text is stored in your IDE, held in RAM(memory) temporarily while you're typing
+  - When you save the file, it is written to disk
+  - When you compile, the compiler reads the source code file from disk, and creates an executable file on disk
+  - When running a program, the OS loads the executable file from disk into RAM and sets up the process address space, etc..
+
+  => CPU Instructions
+    - very simple, low-level commands written in machine code (binary) that the CPU understands
+    - Each instruction tells the CPU to perform a basic operation, like:
+      - Moving data (MOV)
+      - Performing arithmetic (ADD, SUB)
+      - Making decisions (branching)
+      - Jumping to another instruction (JNE)
+      - Calling a function (CALL)
