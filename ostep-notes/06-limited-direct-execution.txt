@@ -1,0 +1,28 @@
+==> Time Sharing
+  - run one process for a little while, then run another one, and so forth
+  - achieves the illusion of parallelism (virtualization)
+
+==> User Mode
+  - code that runs in user mode in restricted in what it can 2025-05-25T14:08:05
+
+==> Kernel Mode
+  - code that runs in kernel mode has full access to the hardware and can execute any instruction
+
+==> System call
+  - allow the kernel to carefully expose certain key pieces of functionality to user programs, such as accessing the file system, creating processes, communicating with other processes, and allocating more memory
+
+==> Flow of System Calls
+  - user process calls a system call
+  - system call program puts arguments in registers or on the stack
+  - system call program puts system call number in a register
+  - program executes a trap instruction (e.g., svc 0 on ARM, int 0x80 on x86)
+  - CPU switches to kernel mode, and control is transferred to the kernel
+  - kernel looks up the system call number in a table
+  - kernel executes the system call
+  - kernel returns to user mode
+  - CPU switches back to user mode
+
+==> Random Notes
+  - The putting of arguments in registers or on the stack is done by the user process not the CPU or OS.
+
+LEFT OFF ON PAGE 4: SPECIAL TRAP INSTRUCTIONS
