@@ -22,7 +22,22 @@
   - kernel returns to user mode
   - CPU switches back to user mode
 
+==> Trap instruction
+  - to execute a system call, a program must execute this special instruction
+  - jumps into the kernel and raises the privilege level to kernel mode
+  => Return-from-trap instruction
+    - When finished running, the kernel calls this instruction
+    - returns into the calling user program, while at the same time reducing the privilege level back to user mode
+
+  - The CPU executes the instruction (system call instruction), the user-space program triggers it, and the OS kernel responds to it
+  - ANALOGY: The syscall instruction as a doorbell: the user program rings it, the CPU hears it and routes control, and the kernel opens the door and handles the request
+
 ==> Random Notes
   - The putting of arguments in registers or on the stack is done by the user process not the CPU or OS.
 
-LEFT OFF ON PAGE 4: SPECIAL TRAP INSTRUCTIONS
+==> Recap Notes
+  - A trap is a system call or fault that causes the CPU to switch to kernel mode. When a system call trap is triggered (e.g., by the syscall instruction) the CPU saves the current program state (e.g., registers, flags, program counter) and switches to the kernel stack.
+  - The kernel handles the syscall, and then uses a return-from-trap instruction (like sysret) to resume user-space execution.
+The CPU executes that return instruction, restoring the saved state and returning control to the user program exactly where it left off.
+
+LEFT OFF ON PAGE 4: VERY BAD IDEA
