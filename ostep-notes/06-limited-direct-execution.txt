@@ -8,6 +8,17 @@
 ==> Kernel Mode
   - code that runs in kernel mode has full access to the hardware and can execute any instruction
 
+==> Kernel Stack
+  - A private stack used by the kernel when executing on behalf of a process
+  - Each process has it's own kernel stack, seperate from it's user-space stack
+  - Used only while the process is in kernel mode (e.g., during system call or interrupt)
+  - The CPU saves PC and flags here during traps
+  => What's in the kernel stack
+    - A trap frame or context frame:
+      - saved user registers (PC, flags, general-purpose registers)
+      - optional system call arguments (if not in registers)
+    - The call stack of the kernel functions (e.g., sys_read -> vfs_read -> ext4_read)
+
 ==> System call
   - allow the kernel to carefully expose certain key pieces of functionality to user programs, such as accessing the file system, creating processes, communicating with other processes, and allocating more memory
 
@@ -28,16 +39,34 @@
   => Return-from-trap instruction
     - When finished running, the kernel calls this instruction
     - returns into the calling user program, while at the same time reducing the privilege level back to user mode
+    - resumes **after** syscall
 
   - The CPU executes the instruction (system call instruction), the user-space program triggers it, and the OS kernel responds to it
   - ANALOGY: The syscall instruction as a doorbell: the user program rings it, the CPU hears it and routes control, and the kernel opens the door and handles the request
+
+==> Trap Table
+  - Used by CPU at runtime to determine which kernel code (handler function) to run to specific traps or interupts
+  - Table is created at boot time and filled by the kernel
+  - Tells CPU where to go on syscall, traps, and interrupts. All syscalls go to the same handler
+  => System call number
+    - set by user code (e.g., in rax) tells the kernel which service is being requested
+  - NOTE TO SELF: The hardware or user program trigger an interrupt which tells the CPU to change to kernel mode and then run the respected handler for the interrupt and then complete the handler and then go back to executing the program or what ever else the CPU was doing
+
+==> Program Counter (instruction pointer)
+    - A special CPU register that holds the memory address of the next instruction to execute
+    - Every time the CPU executes an instruction:
+      1. It fetches the instruction at the address in the program counter
+      2. Then, it usually increments the PC to point to the next instruction
+      3. In case of jumps, calls, branches, or traps, the PC is updated to a new address
+    - 
 
 ==> Random Notes
   - The putting of arguments in registers or on the stack is done by the user process not the CPU or OS.
 
 ==> Recap Notes
-  - A trap is a system call or fault that causes the CPU to switch to kernel mode. When a system call trap is triggered (e.g., by the syscall instruction) the CPU saves the current program state (e.g., registers, flags, program counter) and switches to the kernel stack.
+  - A trap is a system call or fault that causes the CPU to switch to kernel mode. When a system call trap is triggered (e.g., by the syscall instruction) the CPU saves the current program state (e.g., registers, flags, program counter) onto the kernel stack for a process and switches the stack pointer to the kernel stack, switches to kernel mode, and executes the kernel syscall handler.
   - The kernel handles the syscall, and then uses a return-from-trap instruction (like sysret) to resume user-space execution.
 The CPU executes that return instruction, restoring the saved state and returning control to the user program exactly where it left off.
+  - The system call interface relies on the user program putting syscall number and arguments into specific general-purpose registers. The syscall instruction traps to kernel mode, where the CPU automatically switches the stack pointer to a process-specific kernel stack, saving user state like the PC(RIP) and flags(RFLAGS). The kernel can then safely run its handler on its own stack. Once finished, the kernel restores the saved state and uses sysret to resume execution of the user program exactly where it left off.
 
-LEFT OFF ON PAGE 4: VERY BAD IDEA
+LEFT OFF ON PAGE 7: 6.3 Problem #2: Switching between processes

@@ -18,6 +18,8 @@
 
 ==> Context switch (mechanism)
   - Gives the OS the ability to stop running one program and start running another on a given CPU
+  - Each process does not have it own physical registers
+  - The OS gives each process the illusion of having its own by saving and restoring the real CPU registers state during context switches
 
 ==> Policies
   - algorithms for making some kind of decision within the OS
