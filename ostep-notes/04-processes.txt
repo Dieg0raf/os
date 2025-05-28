@@ -26,18 +26,18 @@
   - e.g.: which process to run next (**scheduling policy**)
 
 ==> Flow of running a program(process)
-  1. The program (instructions and static data) is loaded into memory (RAM) from disk as **bytes**
+  1. OS creates and initializes a process control block (PCB) — this holds metadata about the process, including a placeholder for its register values.
   2. OS sets up a process address space, which includes:
     - code (program instructions)
     - a stack (for local variables)
     - a heap (for dynamic memory allocation)
     - a data segment (for static/global variables)
-  3. Initializes a process control block (PCB) — this holds metadata about the process, including a placeholder for its register values.
-  4. Sets up the CPU register values just before the process starts running:
+  3. OS loads program (instructions and static data) is loaded into memory (RAM) from disk as **bytes** and PCB is updated to inlcude PC, SP, File Descriptors, env, and args.
+  4. OS sets up the CPU register values just before the process starts running:
     - Program Counter (PC): set to the first instruction of the program.
     - Stack Pointer (SP): points to the top of the newly created stack.
     - Other registers: often zeroed out or initialized based on system conventions
-  5. The CPU executes one process at a time, using it's registers
+  5. The CPU executes one instruction at a time, using it's registers
   6. When switching process, the OS saves the state of the current process (registers, program counter, etc.) and loads the state of the next process to run, this gives the illusion that each process "has the CPU to itself"
 
 ==> Process List

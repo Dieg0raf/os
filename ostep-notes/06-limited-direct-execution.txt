@@ -18,6 +18,10 @@
       - saved user registers (PC, flags, general-purpose registers)
       - optional system call arguments (if not in registers)
     - The call stack of the kernel functions (e.g., sys_read -> vfs_read -> ext4_read)
+  => When it's used
+    - A process enteres the kernel (via sys call or interrupt)
+    - To run kernel function like read(), write(), yield()
+    - It's temporary working space for kernel code during that process's turn
 
 ==> System call
   - allow the kernel to carefully expose certain key pieces of functionality to user programs, such as accessing the file system, creating processes, communicating with other processes, and allocating more memory
@@ -58,15 +62,37 @@
       1. It fetches the instruction at the address in the program counter
       2. Then, it usually increments the PC to point to the next instruction
       3. In case of jumps, calls, branches, or traps, the PC is updated to a new address
-    - 
+
+==> Time Interrupt (CPU hardware feature - iterrupt timer)
+  - Set up during boot time
+  - Hardware mechanism to ensure the user program does not run forever
+  - Gives the OS the ability to run again on a CPU even if processes act in a non-cooperative fashion
+  - Essential in helping the OS maintain control of the machine
+
+==> Context switch (involves saving CPU state of current process and restoring saved state of another process)
+  - OS saves a few reigters values for the running executing process (into it's PCB)
+  - OS restores a few for the soon-to-be executing process (from it's kernel stack) from it's PCB
+  - OS restores 
+  => Example
+    - To save context (state) of the currently running process, the OS will execute some low-level assembly code to save:
+      1. the general purpose registers
+      2. PC
+      3. the kernel stack pointer of the currently running process (each process has its own kernel stack)
+    - Then restore said registers, PC, and switch to the kernel stack for the soon-to-be-executing process
+  - switches context, by changing the stack pointer to use B's kernel stack (and not A's)
+
+==> Types of register saves/restores during context switching
+  1. Time interrupt occurs:
+    - the **user registers** of the running process are implicity saved by the **hardware**, using the kernel stack of that process
+  2. OS deciding to switch from A to B (context switch):
+    - the **kernel registers** are explicitly saved by the **software** (i.e., the OS), but this time into memory in the process structure of the process
 
 ==> Random Notes
   - The putting of arguments in registers or on the stack is done by the user process not the CPU or OS.
+  - The "saving of state" is handled mostly by the hardware, not the OS code itself
 
 ==> Recap Notes
   - A trap is a system call or fault that causes the CPU to switch to kernel mode. When a system call trap is triggered (e.g., by the syscall instruction) the CPU saves the current program state (e.g., registers, flags, program counter) onto the kernel stack for a process and switches the stack pointer to the kernel stack, switches to kernel mode, and executes the kernel syscall handler.
   - The kernel handles the syscall, and then uses a return-from-trap instruction (like sysret) to resume user-space execution.
 The CPU executes that return instruction, restoring the saved state and returning control to the user program exactly where it left off.
   - The system call interface relies on the user program putting syscall number and arguments into specific general-purpose registers. The syscall instruction traps to kernel mode, where the CPU automatically switches the stack pointer to a process-specific kernel stack, saving user state like the PC(RIP) and flags(RFLAGS). The kernel can then safely run its handler on its own stack. Once finished, the kernel restores the saved state and uses sysret to resume execution of the user program exactly where it left off.
-
-LEFT OFF ON PAGE 7: 6.3 Problem #2: Switching between processes
