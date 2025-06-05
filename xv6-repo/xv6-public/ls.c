@@ -3,11 +3,14 @@
 #include "user.h"
 #include "fs.h"
 
-char*
-fmtname(char *path)
+/*
+ returns the file name part of the path, padded with spaces to DIRSIZ characters 
+ 
+ * */
+char* fmtname(char *path)
 {
   static char buf[DIRSIZ+1];
-  char *p;
+  char *p; // pointer to the base name of the file (after the last / in a path like a/b/c.txt, p = c.txt)
 
   // Find first character after last slash.
   for(p=path+strlen(path); p >= path && *p != '/'; p--)
@@ -17,8 +20,8 @@ fmtname(char *path)
   // Return blank-padded name.
   if(strlen(p) >= DIRSIZ)
     return p;
-  memmove(buf, p, strlen(p));
-  memset(buf+strlen(p), ' ', DIRSIZ-strlen(p));
+  memmove(buf, p, strlen(p)); // copy the short file name (like c.txt) into buffer
+  memset(buf+strlen(p), ' ', DIRSIZ-strlen(p)); // fill the rest of the buffer with spaces for better formatting
   return buf;
 }
 
@@ -47,6 +50,7 @@ ls(char *path)
     break;
 
   case T_DIR:
+    // do i have enough space to store + / + filename + \0
     if(strlen(path) + 1 + DIRSIZ + 1 > sizeof buf){
       printf(1, "ls: path too long\n");
       break;
