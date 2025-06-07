@@ -1,0 +1,51 @@
+#include "types.h"
+#include "stat.h"
+#include "user.h"
+
+int main(int argc, char *argv[]) {
+  int pd1[2];
+  pipe(pd1);
+  
+  // sending nums down first pipe
+  for(int i = 2; i <= 35; i++){
+    if (write(pd1[1], &i, sizeof(int)) < 0) {
+      printf(2, "primes: error occured sending\n");
+    }
+  }
+  close(pd1[1]);
+
+  if (fork() == 0) {
+    // first child
+    int num;
+    int primeNum = 0;
+    int pd2[2];
+    while(read(pd1[0], &num, sizeof(int)) == sizeof(int)) {
+      if (!primeNum) {
+        primeNum = num;
+        continue;
+      }
+      if (num % primeNum != 0){ 
+        if (write(pd2[1], &i, sizeof(int)) < 0) {
+          printf(2, "primes: error occured sending\n"); // sending nums second first pipe
+        }
+      }
+    }
+    close(pd1[0]);
+    close(pd2[1]);
+
+    if (fork() == 0) {
+      // second child
+
+    } else {
+
+    }
+
+  } else {
+    // first parent process
+    close(pd1[0]);
+    wait();
+  }
+
+
+  exit();
+}
